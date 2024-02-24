@@ -15,7 +15,7 @@ const (
 )
 
 func getLocalLogger() Logger {
-	return slog.New(NewPrettyHandler(&slog.HandlerOptions{Level: slog.LevelDebug}))
+	return slog.New(newPrettyHandler(&slog.HandlerOptions{Level: slog.LevelDebug}))
 }
 
 func getDevLogger() Logger {

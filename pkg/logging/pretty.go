@@ -26,25 +26,25 @@ func colorize(colorCode int, v string) string {
 	return fmt.Sprintf("\033[%sm%s%s", strconv.Itoa(colorCode), v, reset)
 }
 
-type PrettyHandler struct {
+type prettyHandler struct {
 	h slog.Handler
 	b *bytes.Buffer
 	m *sync.Mutex
 }
 
-func (h *PrettyHandler) Enabled(ctx context.Context, level slog.Level) bool {
+func (h *prettyHandler) Enabled(ctx context.Context, level slog.Level) bool {
 	return h.h.Enabled(ctx, level)
 }
 
-func (h *PrettyHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &PrettyHandler{h: h.h.WithAttrs(attrs), b: h.b, m: h.m}
+func (h *prettyHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &prettyHandler{h: h.h.WithAttrs(attrs), b: h.b, m: h.m}
 }
 
-func (h *PrettyHandler) WithGroup(name string) slog.Handler {
-	return &PrettyHandler{h: h.h.WithGroup(name), b: h.b, m: h.m}
+func (h *prettyHandler) WithGroup(name string) slog.Handler {
+	return &prettyHandler{h: h.h.WithGroup(name), b: h.b, m: h.m}
 }
 
-func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
+func (h *prettyHandler) Handle(ctx context.Context, r slog.Record) error {
 	level := r.Level.String() + ":"
 
 	switch r.Level {
@@ -78,7 +78,7 @@ func (h *PrettyHandler) Handle(ctx context.Context, r slog.Record) error {
 	return nil
 }
 
-func (h *PrettyHandler) computeAttrs(
+func (h *prettyHandler) computeAttrs(
 	ctx context.Context,
 	r slog.Record,
 ) (map[string]any, error) {
@@ -118,14 +118,14 @@ func suppressDefaults(
 	}
 }
 
-func NewPrettyHandler(opts *slog.HandlerOptions) *PrettyHandler {
+func newPrettyHandler(opts *slog.HandlerOptions) *prettyHandler {
 	if opts == nil {
 		opts = &slog.HandlerOptions{}
 	}
 
 	b := &bytes.Buffer{}
 
-	return &PrettyHandler{
+	return &prettyHandler{
 		b: b,
 		h: slog.NewJSONHandler(b, &slog.HandlerOptions{
 			Level:       opts.Level,

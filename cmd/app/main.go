@@ -3,5 +3,7 @@ package main
 import "todo/internal/server"
 
 func main() {
-	server.Run()
+	s := server.GetServer()
+	s.DotEnvLoad()
+	s.Run()
 }
