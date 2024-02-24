@@ -1,9 +1,8 @@
 package server
 
 import (
-	"fmt"
 	"log"
-	"todo/internal/config"
+	"todo/internal/common"
 
 	"github.com/joho/godotenv"
 )
@@ -16,6 +15,6 @@ func envLoad() {
 
 func Run() {
 	envLoad()
-	cfg := config.GetConfig()
-	fmt.Print(cfg)
+	logger := common.GetLogger()
+	logger.Debug("Hello, World!")
 }

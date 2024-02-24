@@ -10,9 +10,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
-func getConfigPath() string {
-	return "./config/app/main.yaml"
-}
+func getConfigPath() string { return "./config/app/main.yaml" }
 
 func configPathValidate(configPath *string) {
 	if *configPath == "" {
