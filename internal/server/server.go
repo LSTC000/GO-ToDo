@@ -2,9 +2,9 @@ package server
 
 import (
 	"log"
-	"net/http"
 	"todo/internal/config"
 	"todo/internal/intreface"
+	todo "todo/internal/todo/v1"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -31,26 +31,27 @@ func setServerMode(cfg *config.Config) {
 	gin.SetMode(mode)
 }
 
-func runServer(cfg *config.Config) {
-	r := gin.Default()
+func setV1Handlers(r *gin.Engine) {
+	rg := r.Group("/v1")
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	todoHandler := todo.GetHandler()
+	todoHandler.Register(rg)
+}
 
+func runServer(r *gin.Engine, cfg *config.Config) {
 	err := r.Run(":" + cfg.Server.Port)
 	if err != nil {
-		log.Fatalf("Cannot run server: %s", err)
+		log.Fatalf("Cannot run main router: %s", err)
 	}
 }
 
 func (s *Server) Run() {
+	r := gin.Default()
 	cfg := config.GetConfig()
 
 	setServerMode(cfg)
-	runServer(cfg)
+	setV1Handlers(r)
+	runServer(r, cfg)
 }
 
 func GetServer() intreface.IServer {
