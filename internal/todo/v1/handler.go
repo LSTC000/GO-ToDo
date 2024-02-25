@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"net/http"
 	"todo/internal/intreface"
+	"todo/internal/todo"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,15 +18,10 @@ func GetHandler() intreface.IHandler {
 	return &handler{}
 }
 
-func (h handler) Register(rg *gin.RouterGroup) {
-	todo := rg.Group(groupPath)
+func (h *handler) Register(rg *gin.RouterGroup) {
+	todoUseCase := todo.GetUseCase()
+	todoGroup := rg.Group(groupPath)
 	{
-		todo.GET(pingPath, pongFunction)
+		todoGroup.GET(pingPath, todoUseCase.PongFunction)
 	}
-}
-
-func pongFunction(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
 }

@@ -2,9 +2,13 @@ package server
 
 import (
 	"log"
+	_ "todo/docs"
 	"todo/internal/config"
 	"todo/internal/intreface"
 	todo "todo/internal/todo/v1"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -31,8 +35,12 @@ func setServerMode(cfg *config.Config) {
 	gin.SetMode(mode)
 }
 
+func setSwagger(r *gin.Engine) {
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+}
+
 func setV1Handlers(r *gin.Engine) {
-	rg := r.Group("/v1")
+	rg := r.Group("/api/v1")
 
 	todoHandler := todo.GetHandler()
 	todoHandler.Register(rg)
@@ -50,6 +58,7 @@ func (s *Server) Run() {
 	cfg := config.GetConfig()
 
 	setServerMode(cfg)
+	setSwagger(r)
 	setV1Handlers(r)
 	runServer(r, cfg)
 }

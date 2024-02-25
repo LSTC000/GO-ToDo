@@ -1,0 +1,30 @@
+basePath: /api/v1
+definitions:
+  model.Message:
+    properties:
+      message:
+        type: string
+    type: object
+host: 0.0.0.0:8000
+info:
+  contact: {}
+  description: This is a ToDo API.
+  title: ToDo
+  version: 1.0.0
+paths:
+  /todo/ping:
+    get:
+      consumes:
+      - application/json
+      description: Ping Pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Message'
+      summary: Ping
+      tags:
+      - ToDo
+swagger: "2.0"

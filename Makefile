@@ -38,6 +38,9 @@ fmt-run:
 lint-run:
 	golangci-lint run
 
+.PHONY: docs
+swag-gen:
+	swag init -g ./cmd/app/main.go
 
 .PHONY: docker
 docker-local:
