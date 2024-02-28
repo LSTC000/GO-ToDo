@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"todo/internal/server"
 )
 
@@ -13,6 +14,7 @@ import (
 
 func main() {
 	s := server.GetServer()
-	s.DotEnvLoad()
-	s.Run()
+	if err := s.Run(); err != nil {
+		log.Fatalf("Run server error: %v", err)
+	}
 }

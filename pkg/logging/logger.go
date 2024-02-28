@@ -6,7 +6,7 @@ import (
 )
 
 type Mode string
-type Logger = *slog.Logger
+type Logger = slog.Logger
 
 const (
 	Local Mode = "local"
@@ -14,20 +14,20 @@ const (
 	Prod  Mode = "prod"
 )
 
-func getLocalLogger() Logger {
+func getLocalLogger() *Logger {
 	return slog.New(newPrettyHandler(&slog.HandlerOptions{Level: slog.LevelDebug}))
 }
 
-func getDevLogger() Logger {
+func getDevLogger() *Logger {
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 }
 
-func getProdLogger() *slog.Logger {
+func getProdLogger() *Logger {
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 }
 
-func GetLogger(mode Mode) Logger {
-	var log Logger
+func GetLogger(mode Mode) *Logger {
+	var log *Logger
 
 	switch mode {
 	case Local:

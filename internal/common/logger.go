@@ -5,7 +5,7 @@ import (
 	"todo/pkg/logging"
 )
 
-func GetLogger() logging.Logger {
+func GetLogger() *logging.Logger {
 	mode := logging.Prod
 
 	switch cfg := config.GetConfig(); cfg.Project.Mode {

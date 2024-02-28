@@ -1,25 +1,28 @@
 package server
 
 import (
-	"log"
+	"fmt"
 	_ "todo/docs"
+	todoV1 "todo/internal/api/todo/v1"
 	"todo/internal/config"
-	"todo/internal/intreface"
-	todo "todo/internal/todo/v1"
-
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+type IServer interface {
+	Run() error
+}
 
 type Server struct{}
 
-func (s *Server) DotEnvLoad() {
+func setDotEnv() error {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Cannot load .env file: %s", err)
+		return fmt.Errorf("cannot load .env file: %w", err)
 	}
+	return nil
 }
 
 func setServerMode(cfg *config.Config) {
@@ -42,27 +45,36 @@ func setSwagger(r *gin.Engine) {
 func setV1Handlers(r *gin.Engine) {
 	rg := r.Group("/api/v1")
 
-	todoHandler := todo.GetHandler()
-	todoHandler.Register(rg)
+	todoV1Handler := todoV1.GetHandler()
+	todoV1Handler.Register(rg)
 }
 
-func runServer(r *gin.Engine, cfg *config.Config) {
-	err := r.Run(":" + cfg.Server.Port)
-	if err != nil {
-		log.Fatalf("Cannot run main router: %s", err)
+func runServer(r *gin.Engine, cfg *config.Config) error {
+	if err := r.Run(":" + cfg.Server.Port); err != nil {
+		return fmt.Errorf("cannot run main router: %w", err)
 	}
+	return nil
 }
 
-func (s *Server) Run() {
+func (s *Server) Run() error {
 	r := gin.Default()
 	cfg := config.GetConfig()
+
+	if err := setDotEnv(); err != nil {
+		return err
+	}
 
 	setServerMode(cfg)
 	setSwagger(r)
 	setV1Handlers(r)
-	runServer(r, cfg)
+
+	if err := runServer(r, cfg); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func GetServer() intreface.IServer {
+func GetServer() IServer {
 	return &Server{}
 }

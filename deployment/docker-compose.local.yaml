@@ -1,0 +1,38 @@
+version: "3.8"
+
+volumes:
+  mongo-data:
+  mongo-express-data:
+
+networks:
+  net:
+    driver: bridge
+
+services:
+  mongo:
+    container_name: mongo-todo
+    image: mongo:7.0.5
+    env_file:
+      - ../.env
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - net
+
+  mongo-express:
+    container_name: mongo-express-todo
+    image: mongo-express:1.0.2-20
+    env_file:
+      - ../.env
+    volumes:
+      - mongo-express-data:/data/db
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    networks:
+      - net
